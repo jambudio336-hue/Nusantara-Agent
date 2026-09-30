@@ -16,6 +16,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final TextEditingController model;
   bool autoModel = true;
   bool obscure = true;
+  bool? connectionOk;
   List<String> discovered = [];
   bool loadingModels = false;
 
@@ -30,13 +31,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void dispose() { api.dispose(); hibp.dispose(); model.dispose(); super.dispose(); }
 
-  void _save() {
-    Store.apiKey = api.text.trim().isEmpty ? null : api.text.trim();
+  Future<void> _save() async {
+    await Store.saveApiKey(api.text.trim().isEmpty ? null : api.text.trim());
     Store.hibpKey = hibp.text.trim().isEmpty ? null : hibp.text.trim();
     Store.model = model.text.trim().isEmpty ? 'openrouter/auto' : model.text.trim();
     Store.autoModel = autoModel;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pengaturan disimpan lokal di perangkat.')));
     setState(() {});
+  }
+
+  Future<void> _testKey() async {
+    final key = api.text.trim();
+    if (key.isEmpty) { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Masukkan API key OpenRouter dulu.'))); return; }
+    await Store.saveApiKey(key);
+    setState(() => connectionOk = null);
+    try {
+      final models = await OpenRouter.models();
+      if (mounted) { setState(() => connectionOk = true); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('API key valid. ${models.length} model tersedia.'))); }
+    } catch (e) {
+      if (mounted) { setState(() => connectionOk = false); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Tes API key gagal: $e'), duration: const Duration(seconds: 6))); }
+    }
   }
 
   Future<void> _discover() async {
@@ -69,7 +83,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(16), children: [
     const Text('Settings', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800)),
     const SizedBox(height: 8),
-    Text(Store.hasKey ? 'OpenRouter aktif — request langsung dari perangkat.' : 'Masukkan API key OpenRouter untuk mengaktifkan chat.', style: const TextStyle(color: Colors.white70)),
+    Row(children: [Icon(Icons.circle, size: 11, color: connectionOk == true ? Colors.greenAccent : connectionOk == false ? Colors.redAccent : Colors.orangeAccent), const SizedBox(width: 8), Text(connectionOk == true ? 'CONNECTED — OpenRouter merespons' : connectionOk == false ? 'CONNECTION FAILED — cek key dan limit' : 'NOT TESTED — tekan Tes API', style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w700))]),
+    const SizedBox(height: 8),
+    Text(Store.hasKey ? 'Key tersimpan lokal; status di atas berasal dari tes endpoint terakhir.' : 'Masukkan API key OpenRouter untuk mengaktifkan chat.', style: const TextStyle(color: Colors.white70)),
     const SizedBox(height: 18),
     TextField(controller: api, obscureText: obscure, decoration: InputDecoration(labelText: 'OpenRouter API Key', prefixIcon: const Icon(Icons.key_outlined), suffixIcon: IconButton(onPressed: () => setState(() => obscure = !obscure), icon: Icon(obscure ? Icons.visibility : Icons.visibility_off)))),
     const SizedBox(height: 8),
@@ -88,7 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     TextField(controller: hibp, obscureText: true, decoration: const InputDecoration(labelText: 'HIBP API Key (opsional)', prefixIcon: Icon(Icons.shield_outlined))),
     const SizedBox(height: 14),
     const SizedBox(height: 18),
-    ElevatedButton.icon(onPressed: _save, icon: const Icon(Icons.save_outlined), label: const Text('Simpan pengaturan')),
+    Row(children: [Expanded(child: ElevatedButton.icon(onPressed: _save, icon: const Icon(Icons.save_outlined), label: const Text('Simpan'))), const SizedBox(width: 8), Expanded(child: OutlinedButton.icon(onPressed: _testKey, icon: const Icon(Icons.wifi_tethering), label: const Text('Tes API')))]),
     OutlinedButton.icon(onPressed: () { Store.apiKey = null; api.clear(); setState(() {}); }, icon: const Icon(Icons.delete_outline), label: const Text('Hapus API key')),
     OutlinedButton.icon(onPressed: () { Store.clearHistory(); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Riwayat chat dihapus.'))); }, icon: const Icon(Icons.history_toggle_off), label: const Text('Hapus riwayat chat')),
     const SizedBox(height: 18),

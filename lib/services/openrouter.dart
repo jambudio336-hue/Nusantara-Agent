@@ -29,8 +29,11 @@ Jawab dengan langkah yang jelas dan praktis. Selalu akhiri dengan: by.mazkiplay.
     final key = Store.apiKey;
     final headers = key == null || key.isEmpty ? {'Accept': 'application/json'} : _headers(key);
     final res = await http.get(Uri.parse(modelsEndpoint), headers: headers).timeout(const Duration(seconds: 30));
-    if (res.statusCode < 200 || res.statusCode >= 300) throw Exception('OpenRouter models HTTP ${res.statusCode}');
     final data = jsonDecode(res.body);
+    if (res.statusCode < 200 || res.statusCode >= 300) {
+      final detail = data is Map && data['error'] is Map ? data['error']['message'] : data;
+      throw Exception('OpenRouter HTTP ${res.statusCode}: ${detail ?? 'respons tidak valid'}');
+    }
     final items = data is Map ? data['data'] : null;
     return items is List ? items.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList() : <Map<String, dynamic>>[];
   }

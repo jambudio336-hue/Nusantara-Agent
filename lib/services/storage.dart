@@ -18,13 +18,17 @@ class Store {
   }
 
   static String? get apiKey => _apiKey;
-  static set apiKey(String? v) {
+  static Future<void> saveApiKey(String? v) async {
     _apiKey = v;
     if (v == null || v.isEmpty) {
-      _secure.delete(key: 'openrouter_api_key');
+      await _secure.delete(key: 'openrouter_api_key');
     } else {
-      _secure.write(key: 'openrouter_api_key', value: v);
+      await _secure.write(key: 'openrouter_api_key', value: v);
     }
+  }
+  static set apiKey(String? v) {
+    _apiKey = v;
+    if (v == null || v.isEmpty) { _secure.delete(key: 'openrouter_api_key'); } else { _secure.write(key: 'openrouter_api_key', value: v); }
   }
   static bool get hasKey => (_apiKey ?? '').isNotEmpty;
 
