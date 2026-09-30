@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../services/storage.dart';
-import 'settings.dart';
 
 class JournalScreen extends StatefulWidget {
   const JournalScreen({super.key});
@@ -11,7 +10,7 @@ class JournalScreen extends StatefulWidget {
 }
 
 class _JournalScreenState extends State<JournalScreen> {
-  StorageService get _storage => StorageScope.of(context);
+  
 
   Future<void> _addEntry() async {
     final titleController = TextEditingController();
@@ -57,7 +56,7 @@ class _JournalScreenState extends State<JournalScreen> {
       return;
     }
 
-    await _storage.addJournalEntry(
+    await Store.addJournalEntry(
       title: titleController.text,
       content: contentController.text,
     );
@@ -70,7 +69,7 @@ class _JournalScreenState extends State<JournalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final entries = _storage.journalEntries;
+    final entries = Store.journalEntries;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -110,7 +109,7 @@ class _JournalScreenState extends State<JournalScreen> {
                         alignment: Alignment.centerRight,
                         child: TextButton.icon(
                           onPressed: () async {
-                            await _storage.deleteJournalEntry(index);
+                            await Store.deleteJournalEntry(index);
                             if (mounted) setState(() {});
                           },
                           icon: const Icon(Icons.delete_outline),
