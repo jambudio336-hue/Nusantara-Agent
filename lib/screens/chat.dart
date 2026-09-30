@@ -7,6 +7,7 @@ import '../theme.dart';
 import 'journal.dart';
 import 'settings.dart';
 import 'tools.dart';
+import 'ops/ops_center.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -61,10 +62,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
       if (!mounted) return;
       setState(() {
-        _messages.add({
-          'role': 'assistant',
-          'content': reply,
-        });
+        _messages.add({'role': 'assistant', 'content': reply});
       });
       Store.history = List<Map<String, String>>.from(_messages);
     } catch (error) {
@@ -72,7 +70,7 @@ class _ChatScreenState extends State<ChatScreen> {
       setState(() {
         _messages.add({
           'role': 'assistant',
-          'content': '⚠️ ' + error.toString(),
+          'content': '⚠️ $error',
         });
       });
       Store.history = List<Map<String, String>>.from(_messages);
@@ -102,10 +100,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: Text(
                       'Tanyakan apa saja tentang security, coding, trading, atau workflow lu.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
                     ),
                   ),
                 )
@@ -161,9 +156,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     onSubmitted: (_) => _send(),
                     minLines: 1,
                     maxLines: 5,
-                    decoration: const InputDecoration(
-                      hintText: 'Ketik pesan...',
-                    ),
+                    decoration:
+                        const InputDecoration(hintText: 'Ketik pesan...'),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -192,6 +186,14 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: const Text('Mazkiplay AI'),
         actions: [
+          IconButton(
+            tooltip: 'Ops Center',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const OpsCenter()),
+            ),
+            icon: const Icon(Icons.terminal),
+          ),
           IconButton(
             tooltip: 'Settings',
             onPressed: () => setState(() => _tab = 3),
