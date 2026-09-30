@@ -89,12 +89,20 @@ class _ChatScreenState extends State<ChatScreen> {
   void _newChat() { setState(() => _messages = []); Store.clearHistory(); }
 
   Widget _buildChat() => Column(children: [
-    Expanded(child: _messages.isEmpty
-      ? Center(child: Padding(padding: const EdgeInsets.all(24), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Text('Apa yang bisa gue bantu?', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800)), const SizedBox(height: 8), const Text('Chat langsung dengan OpenRouter untuk coding, riset, market, dan security defensif.', textAlign: TextAlign.center, style: TextStyle(color: Colors.white60)), const SizedBox(height: 18), Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: [_quickPrompt('Analisis EURUSD secara teknikal dan fundamental'), _quickPrompt('Bantu debug kode saya secara bertahap'), _quickPrompt('Buat checklist security untuk aplikasi saya')])]))
-      : ListView.builder(controller: _scrollController, padding: const EdgeInsets.fromLTRB(14, 10, 14, 18), itemCount: _messages.length, itemBuilder: (_, index) {
-          final item = _messages[index]; final user = item['role'] == 'user'; final accent = GhostMode.accent;
-          return Align(alignment: user ? Alignment.centerRight : Alignment.centerLeft, child: Container(constraints: const BoxConstraints(maxWidth: 620), margin: const EdgeInsets.only(bottom: 10), padding: const EdgeInsets.all(14), decoration: BoxDecoration(gradient: user ? LinearGradient(colors: [accent, const Color(0xFF7C4DFF)]) : LinearGradient(colors: [GhostMode.card, const Color(0xFF202033)]), borderRadius: BorderRadius.circular(18), border: Border.all(color: accent.withValues(alpha: .22))), child: user ? Text(item['content'] ?? '') : MarkdownBody(data: item['content'] ?? '')));
-        })),
+    Expanded(
+      child: _messages.isEmpty
+          ? Center(child: Padding(padding: const EdgeInsets.all(24), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Text('Apa yang bisa gue bantu?', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 8),
+              const Text('Chat langsung dengan OpenRouter untuk coding, riset, market, dan security defensif.', textAlign: TextAlign.center, style: TextStyle(color: Colors.white60)),
+              const SizedBox(height: 18),
+              Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: [_quickPrompt('Analisis EURUSD secara teknikal dan fundamental'), _quickPrompt('Bantu debug kode saya secara bertahap'), _quickPrompt('Buat checklist security untuk aplikasi saya')]),
+            ])))
+          : ListView.builder(controller: _scrollController, padding: const EdgeInsets.fromLTRB(14, 10, 14, 18), itemCount: _messages.length, itemBuilder: (_, index) {
+              final item = _messages[index]; final user = item['role'] == 'user'; final accent = GhostMode.accent;
+              return Align(alignment: user ? Alignment.centerRight : Alignment.centerLeft, child: Container(constraints: const BoxConstraints(maxWidth: 620), margin: const EdgeInsets.only(bottom: 10), padding: const EdgeInsets.all(14), decoration: BoxDecoration(gradient: user ? LinearGradient(colors: [accent, const Color(0xFF7C4DFF)]) : LinearGradient(colors: [GhostMode.card, const Color(0xFF202033)]), borderRadius: BorderRadius.circular(18), border: Border.all(color: accent.withValues(alpha: .22))), child: user ? Text(item['content'] ?? '') : MarkdownBody(data: item['content'] ?? '')));
+            }),
+    ),
     if (_loading) const Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6), child: Align(alignment: Alignment.centerLeft, child: SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2)))),
     if (_attachmentName != null) Padding(padding: const EdgeInsets.symmetric(horizontal: 14), child: Align(alignment: Alignment.centerLeft, child: Chip(avatar: const Icon(Icons.attach_file, size: 16), label: Text(_attachmentName!), onDeleted: () => setState(() { _attachmentName = null; _attachmentContent = null; })))),
     SafeArea(top: false, child: Padding(padding: const EdgeInsets.fromLTRB(12, 8, 12, 10), child: Row(children: [
