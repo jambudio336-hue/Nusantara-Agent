@@ -5,7 +5,6 @@ import 'package:video_player/video_player.dart';
 class IntroScreen extends StatefulWidget {
   final Widget next;
   const IntroScreen({super.key, required this.next});
-
   @override State<IntroScreen> createState() => _IntroScreenState();
 }
 
@@ -18,14 +17,21 @@ class _IntroScreenState extends State<IntroScreen> {
   void initState() {
     super.initState();
     controller = VideoPlayerController.asset('assets/intro.mp4');
-    controller.initialize().then((_) {
+    _initVideo();
+  }
+
+  Future<void> _initVideo() async {
+    try {
+      await controller.initialize();
       if (!mounted) return;
       controller.setVolume(1.0);
-      controller.play();
       controller.addListener(_videoListener);
       setState(() => ready = true);
+      await controller.play();
       _pulse();
-    }).catchError((_) => _finish());
+    } catch (_) {
+      _finish();
+    }
     Future<void>.delayed(const Duration(seconds: 10), () {
       if (mounted && !ready) _finish();
     });
@@ -41,8 +47,7 @@ class _IntroScreenState extends State<IntroScreen> {
 
   void _videoListener() {
     if (!controller.value.isInitialized) return;
-    if (controller.value.position >= controller.value.duration &&
-        !controller.value.isPlaying) {
+    if (controller.value.position >= controller.value.duration && !controller.value.isPlaying) {
       _finish();
     }
   }
@@ -50,7 +55,6 @@ class _IntroScreenState extends State<IntroScreen> {
   void _finish() {
     if (finished || !mounted) return;
     finished = true;
-    controller.removeListener(_videoListener);
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => widget.next),
     );
@@ -70,22 +74,22 @@ class _IntroScreenState extends State<IntroScreen> {
       backgroundColor: Colors.black,
       body: Center(
         child: ready
-            ? FittedBox(
-                fit: BoxFit.cover,
-                child: SizedBox(
-                  width: controller.value.size.width,
-                  height: controller.value.size.height,
-                  child: VideoPlayer(controller),
-                ),
-              )
-            : const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(color: Color(0xFFE53935)),
-                  SizedBox(height: 16),
-                  Text('MAZKIPLAY AI', style: TextStyle(color: Colors.white, letterSpacing: 4)),
-                ],
+          ? FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: controller.value.size.width,
+                height: controller.value.size.height,
+                child: VideoPlayer(controller),
               ),
+            )
+          : const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(color: Color(0xFFE53935)),
+                SizedBox(height: 16),
+                Text('MAZKIPLAY AI', style: TextStyle(color: Colors.white, letterSpacing: 4)),
+              ],
+            ),
       ),
     );
   }
