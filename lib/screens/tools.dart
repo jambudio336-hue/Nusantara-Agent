@@ -64,6 +64,13 @@ class _ToolsScreenState extends State<ToolsScreen> {
         ),
         const SizedBox(height: 10),
         _ToolCard(
+          icon: Icons.radar,
+          title: 'Market Intelligence Hub',
+          subtitle: 'Radar • Risk Guardian • Trade Setup',
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TradeIntelligenceHub())),
+        ),
+        const SizedBox(height: 10),
+        _ToolCard(
           icon: Icons.candlestick_chart,
           title: 'Live Trading Terminal',
           subtitle: 'Forex • Gold • Crypto • indicators • risk',
