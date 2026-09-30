@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 
 import '../services/storage.dart';
+import '../theme.dart';
+
+const MODELS = [
+  'openai/gpt-4o-mini',
+  'openai/gpt-4o',
+  'anthropic/claude-sonnet-4',
+  'deepseek/deepseek-chat',
+  'google/gemini-2.0-flash-001',
+  'meta-llama/llama-3.1-405b-instruct',
+];
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -10,127 +20,167 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  late final TextEditingController _apiKeyController;
-  late final TextEditingController _modelController;
-
-  StorageService get _storage => StorageScope.of(context);
+  late final TextEditingController keyCtrl;
+  late final TextEditingController capitalCtrl;
+  late String model;
+  bool obscureKey = true;
 
   @override
   void initState() {
     super.initState();
-    _apiKeyController = TextEditingController();
-    _modelController = TextEditingController();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_apiKeyController.text.isEmpty) {
-      _apiKeyController.text = _storage.apiKey ?? '';
-      _modelController.text = _storage.model;
-    }
+    keyCtrl = TextEditingController(text: Store.apiKey ?? '');
+    model = MODELS.contains(Store.model) ? Store.model : MODELS.first;
+    capitalCtrl = TextEditingController(
+      text: Store.capital.toStringAsFixed(2),
+    );
   }
 
   @override
   void dispose() {
-    _apiKeyController.dispose();
-    _modelController.dispose();
+    keyCtrl.dispose();
+    capitalCtrl.dispose();
     super.dispose();
   }
 
-  Future<void> _save() async {
-    await _storage.saveApiKey(_apiKeyController.text);
-    await _storage.saveModel(_modelController.text);
-    if (!mounted) return;
+  void _save() {
+    final key = keyCtrl.text.trim();
+    final capital = double.tryParse(
+          capitalCtrl.text.trim().replaceAll(',', '.'),
+        ) ??
+        1000;
+
+    Store.apiKey = key.isEmpty ? null : key;
+    Store.model = model;
+    Store.capital = capital < 0 ? 0 : capital;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Pengaturan disimpan.')),
+      const SnackBar(
+        backgroundColor: MzTheme.red,
+        content: Text('✅ Pengaturan tersimpan di storage HP'),
+      ),
     );
-    setState(() {});
+
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final configured = (_storage.apiKey ?? '').isNotEmpty;
-
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        const Text(
-          'Settings',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          configured
-              ? 'OpenRouter terkonfigurasi.'
-              : 'Masukkan API key OpenRouter untuk mengaktifkan chat.',
-          style: const TextStyle(color: Colors.white70),
-        ),
-        const SizedBox(height: 22),
-        TextField(
-          controller: _apiKeyController,
-          obscureText: true,
-          decoration: const InputDecoration(
-            labelText: 'OpenRouter API Key',
-            prefixIcon: Icon(Icons.key_outlined),
-          ),
-        ),
-        const SizedBox(height: 14),
-        TextField(
-          controller: _modelController,
-          decoration: const InputDecoration(
-            labelText: 'Model',
-            prefixIcon: Icon(Icons.psychology_outlined),
-          ),
-        ),
-        const SizedBox(height: 20),
-        ElevatedButton.icon(
-          onPressed: _save,
-          icon: const Icon(Icons.save_outlined),
-          label: const Text('Simpan'),
-        ),
-        const SizedBox(height: 10),
-        OutlinedButton.icon(
-          onPressed: () async {
-            await _storage.clearApiKey();
-            _apiKeyController.clear();
-            if (mounted) setState(() {});
-          },
-          icon: const Icon(Icons.delete_outline),
-          label: const Text('Hapus API Key'),
-        ),
-        const SizedBox(height: 24),
-        const Card(
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'API key disimpan lokal menggunakan SharedPreferences dan tidak ditanam di source code.',
-              style: TextStyle(color: Colors.white70),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Settings'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          const Text(
+            'OpenRouter API Key',
+            style: TextStyle(
+              color: Colors.white70,
+              fontWeight: FontWeight.bold,
             ),
           ),
-        ),
-      ],
+          const SizedBox(height: 4),
+          const Text(
+            'Dapatkan API key dari OpenRouter. Key disimpan lokal di perangkat.',
+            style: TextStyle(
+              color: Colors.white38,
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: keyCtrl,
+            obscureText: obscureKey,
+            autocorrect: false,
+            enableSuggestions: false,
+            decoration: InputDecoration(
+              hintText: 'sk-or-v1-...',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              suffixIcon: IconButton(
+                tooltip: obscureKey ? 'Tampilkan API key' : 'Sembunyikan API key',
+                icon: Icon(
+                  obscureKey
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
+                ),
+                onPressed: () {
+                  setState(() => obscureKey = !obscureKey);
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Model AI',
+            style: TextStyle(
+              color: Colors.white70,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String>(
+            value: model,
+            dropdownColor: MzTheme.card,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            items: MODELS
+                .map(
+                  (m) => DropdownMenuItem<String>(
+                    value: m,
+                    child: Text(
+                      m,
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                  ),
+                )
+                .toList(),
+            onChanged: (v) {
+              if (v != null) {
+                setState(() => model = v);
+              }
+            },
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Modal Awal Jurnal Trading ($)',
+            style: TextStyle(
+              color: Colors.white70,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: capitalCtrl,
+            keyboardType: const TextInputType.numberWithOptions(
+              decimal: true,
+            ),
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              prefixText: '$ ',
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: MzTheme.red,
+              foregroundColor: Colors.white,
+              minimumSize: const Size.fromHeight(50),
+            ),
+            onPressed: _save,
+            child: const Text(
+              'SIMPAN',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
     );
   }
-}
-
-class StorageScope extends InheritedWidget {
-  final StorageService storage;
-
-  const StorageScope({
-    super.key,
-    required this.storage,
-    required super.child,
-  });
-
-  static StorageService of(BuildContext context) {
-    final scope =
-        context.dependOnInheritedWidgetOfExactType<StorageScope>();
-    assert(scope != null, 'StorageScope tidak tersedia.');
-    return scope!.storage;
-  }
-
-  @override
-  bool updateShouldNotify(StorageScope oldWidget) => storage != oldWidget.storage;
 }
