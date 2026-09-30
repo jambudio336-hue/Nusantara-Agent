@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/storage.dart';
+import '../widgets/animations.dart';
+import 'welcome.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -56,6 +60,61 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Future<void> _nuke(BuildContext context) async {
+    const messages = [
+      'Yakin mau NUKE semua data?',
+      'Beneran? Riwayat + API key + jurnal HABIS.',
+      'Klik sekali lagi. Tidak ada jalan balik.',
+    ];
+
+    for (final message in messages) {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AlertDialog(
+          backgroundColor: const Color(0xFF16161F),
+          title: const Text(
+            '☠ WARNING',
+            style: TextStyle(color: Color(0xFFE53935)),
+          ),
+          content: Text(
+            message,
+            style: const TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(_, false),
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(_, true),
+              child: const Text('LANJUT'),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed != true || !context.mounted) return;
+    }
+
+    await Hive.box('store').clear();
+    await Hive.box('journal').clear();
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    _apiKeyController.clear();
+    _modelController.text = 'openai/gpt-4o-mini';
+
+    if (!context.mounted) return;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+      (_) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -106,6 +165,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onPressed: _clearHistory,
           icon: const Icon(Icons.history_toggle_off),
           label: const Text('Hapus Riwayat Chat'),
+        ),
+        const SizedBox(height: 18),
+        Pressable(
+          onTap: () => _nuke(context),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              border: Border.all(
+                color: const Color(0xFFE53935),
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Center(
+              child: Text(
+                '☠ NUKE ALL DATA',
+                style: TextStyle(
+                  color: Color(0xFFE53935),
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 2,
+                ),
+              ),
+            ),
+          ),
         ),
         const SizedBox(height: 24),
         const Card(
