@@ -5,6 +5,7 @@ import 'theme.dart';
 import 'screens/welcome.dart';
 import 'screens/chat.dart';
 import 'services/connectivity_service.dart';
+import 'services/ghost_mode.dart';
 
 void main() async {
  WidgetsFlutterBinding.ensureInitialized();
@@ -16,14 +17,18 @@ void main() async {
 }
 class MazkiApp extends StatelessWidget {
  const MazkiApp({super.key});
- @override Widget build(BuildContext context)=>MaterialApp(
-  title:'Mazkiplay AI',debugShowCheckedModeBanner:false,theme:MzTheme.dark,
-  home:NetGate.guard(FutureBuilder<SharedPreferences>(
-   future:SharedPreferences.getInstance(),
-   builder:(_,snap){
-    if(!snap.hasData)return const Scaffold(body:Center(child:CircularProgressIndicator(color:MzTheme.red)));
-    return (snap.data!.getBool('agreed')??false)?const ChatScreen():const WelcomeScreen();
-   },
-  )),
+ @override Widget build(BuildContext context)=>ValueListenableBuilder<bool>(
+  valueListenable:GhostMode.active,
+  builder:(_,ghost,__)=>MaterialApp(
+   title:'Mazkiplay AI',debugShowCheckedModeBanner:false,
+   theme:ghost?MzTheme.ghost:MzTheme.dark,
+   home:NetGate.guard(FutureBuilder<SharedPreferences>(
+    future:SharedPreferences.getInstance(),
+    builder:(_,snap){
+     if(!snap.hasData)return const Scaffold(body:Center(child:CircularProgressIndicator(color:MzTheme.red)));
+     return (snap.data!.getBool('agreed')??false)?const ChatScreen():const WelcomeScreen();
+    },
+   )),
+  ),
  );
 }
