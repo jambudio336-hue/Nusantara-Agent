@@ -1,3 +1,5 @@
+import 'market_radar.dart';
+import 'risk_guardian.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/market_candle.dart';
@@ -19,3 +21,4 @@ class _TradingScreenState extends State<TradingScreen> { String symbol='EURUSD',
  Widget _landscape(String s,String score)=>Row(children:[Expanded(flex:3,child:_chart()),const SizedBox(width:10),Expanded(flex:1,child:SingleChildScrollView(child:_panel(s,score)))]);
 }
 class _FullChart extends StatelessWidget { final List<MarketCandle> candles; final Map<String,dynamic> a; const _FullChart({required this.candles,required this.a}); @override Widget build(BuildContext context)=>Scaffold(backgroundColor:Colors.black,appBar:AppBar(title:const Text('FULLSCREEN CHART')),body:CandleChart(candles:candles,entry:a['price'],sl:a['signal']=='SELL'?(a['price']??0)+((a['atr']??0)*1.5):null,tp:a['signal']=='SELL'?(a['price']??0)-((a['atr']??0)*3):null)); }
+class TradeIntelligenceHub extends StatelessWidget { const TradeIntelligenceHub({super.key}); @override Widget build(BuildContext context)=>Scaffold(backgroundColor:const Color(0xFF080A10),appBar:AppBar(title:const Text('MAZKIPLAY TRADE')),body:ListView(padding:const EdgeInsets.all(12),children:[_card(context,'📡 Market Radar','Scan seluruh instrumen',const MarketRadarScreen()),_card(context,'🛡️ Risk Guardian','Cek risiko sebelum entry',const RiskGuardianScreen()),_card(context,'📊 Multi-Timeframe Matrix','Bandingkan trend 5M sampai 1D',const TradingScreen()),_card(context,'🧮 Trade Setup','Entry • SL • TP • position sizing',const TradingScreen())]));} Widget _card(BuildContext c,String t,String s,Widget page)=>Card(color:const Color(0xFF121722),child:ListTile(title:Text(t,style:const TextStyle(fontWeight:FontWeight.w800)),subtitle:Text(s),trailing:const Icon(Icons.chevron_right),onTap:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>page)))); }
