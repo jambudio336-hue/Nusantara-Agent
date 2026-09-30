@@ -5,6 +5,7 @@ import '../services/market_scanner.dart';
 import '../services/economic_calendar.dart';
 import '../services/risk_engine.dart';
 import '../theme.dart';
+import 'trading.dart';
 
 class MarketCenterScreen extends StatefulWidget {
   const MarketCenterScreen({super.key});
@@ -129,6 +130,7 @@ class _MarketCenterScreenState extends State<MarketCenterScreen> {
             const SizedBox(height: 10),
             Text('FEED  ' + (loading ? 'SYNC' : 'LIVE') + '   •   ASSETS ' + quotes.length.toString() + '   •   HIGH NEWS ' + events.where((e) => e.highImpact).length.toString()),
           ])),
+          _card(Row(children: [const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('TRADINGVIEW LIVE CHART', style: TextStyle(color: MzTheme.cyan, fontWeight: FontWeight.w900)), SizedBox(height: 4), Text('Manual indicators + AI signal', style: TextStyle(color: Colors.white60))])), FilledButton.icon(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TradingScreen())), icon: const Icon(Icons.candlestick_chart), label: const Text('BUKA CHART'))])),
           if (quotes.isEmpty && !loading)
             _card(const Text('Belum ada quote. Provider mungkin rate-limit atau pair tidak tersedia.', style: TextStyle(color: Colors.orangeAccent))),
           ...quotes.map(_quoteCard),
