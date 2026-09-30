@@ -11,34 +11,28 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.35.2'
           channel: stable
           cache: true
-
       - name: Prepare Android project
         run: |
-          rm -rf app build.gradle settings.gradle test
+          rm -rf app build.gradle settings.gradle
           flutter create --platforms=android --project-name mazkiplay_ai .
-
+          rm -rf test
       - name: Get dependencies
         run: flutter pub get
-
       - name: Analyze Dart
         run: flutter analyze
-
       - name: Build release APK
         run: flutter build apk --release
-
       - name: Upload release APK
         uses: actions/upload-artifact@v4
         with:
           name: Mazkiplay-AI-release
           path: build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
-
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
