@@ -14,6 +14,7 @@ class _IntroScreenState extends State<IntroScreen> {
   late final VideoPlayerController controller;
   bool ready = false;
   bool finished = false;
+  DateTime? _openedAt;
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class _IntroScreenState extends State<IntroScreen> {
       controller.setVolume(1.0); // use the video's original audio track at full player volume
       controller.addListener(_videoListener);
       setState(() => ready = true);
+      _openedAt = DateTime.now();
       await controller.play();
       _pulse();
     } catch (_) {
@@ -43,8 +45,10 @@ class _IntroScreenState extends State<IntroScreen> {
 
   void _pulse() {
     if (!mounted || finished) return;
+    final elapsed = _openedAt == null ? Duration.zero : DateTime.now().difference(_openedAt!);
+    if (elapsed >= const Duration(seconds: 10)) return;
     HapticFeedback.heavyImpact();
-    Future<void>.delayed(const Duration(milliseconds: 900), () {
+    Future<void>.delayed(const Duration(milliseconds: 320), () {
       if (mounted && !finished) _pulse();
     });
   }
