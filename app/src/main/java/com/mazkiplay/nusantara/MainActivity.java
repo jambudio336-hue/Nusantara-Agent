@@ -1,6 +1,6 @@
 package com.mazkiplay.nusantara;
 
-import android.app.*;import android.os.*;import android.graphics.pdf.PdfDocument;import android.content.*;import android.security.keystore.*;import android.util.Base64;import android.view.*;import android.widget.*;import java.io.*;import java.net.*;import java.nio.charset.StandardCharsets;import java.security.*;import javax.crypto.*;import javax.crypto.spec.GCMParameterSpec;import org.json.*;
+import android.app.*;import android.os.*;import android.graphics.Color;import android.graphics.pdf.PdfDocument;import android.content.*;import android.security.keystore.*;import android.util.Base64;import android.view.*;import android.widget.*;import java.io.*;import java.net.*;import java.nio.charset.StandardCharsets;import java.security.*;import javax.crypto.*;import javax.crypto.spec.GCMParameterSpec;import org.json.*;
 
 public class MainActivity extends Activity {
  LinearLayout root,chat; EditText input,key; TextView status,modelLabel; Spinner models; String endpoint="https://openrouter.ai/api/v1/"; android.content.SharedPreferences prefs; SecretKey secret;
