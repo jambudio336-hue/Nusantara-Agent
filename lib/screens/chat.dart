@@ -90,7 +90,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildChat() => Column(children: [
     Expanded(child: _messages.isEmpty
-      ? const Center(child: Padding(padding: EdgeInsets.all(32), child: Text('Tanyakan apa saja tentang coding, security defensif, trading research, OSINT publik, atau workflow lu.', textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 16))))
+      ? Center(child: Padding(padding: const EdgeInsets.all(24), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Text('Apa yang bisa gue bantu?', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800)), const SizedBox(height: 8), const Text('Chat langsung dengan OpenRouter untuk coding, riset, market, dan security defensif.', textAlign: TextAlign.center, style: TextStyle(color: Colors.white60)), const SizedBox(height: 18), Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: [_quickPrompt('Analisis EURUSD secara teknikal dan fundamental'), _quickPrompt('Bantu debug kode saya secara bertahap'), _quickPrompt('Buat checklist security untuk aplikasi saya')])]))
       : ListView.builder(controller: _scrollController, padding: const EdgeInsets.fromLTRB(14, 10, 14, 18), itemCount: _messages.length, itemBuilder: (_, index) {
           final item = _messages[index]; final user = item['role'] == 'user'; final accent = GhostMode.accent;
           return Align(alignment: user ? Alignment.centerRight : Alignment.centerLeft, child: Container(constraints: const BoxConstraints(maxWidth: 620), margin: const EdgeInsets.only(bottom: 10), padding: const EdgeInsets.all(14), decoration: BoxDecoration(gradient: user ? LinearGradient(colors: [accent, const Color(0xFF7C4DFF)]) : LinearGradient(colors: [GhostMode.card, const Color(0xFF202033)]), borderRadius: BorderRadius.circular(18), border: Border.all(color: accent.withValues(alpha: .22))), child: user ? Text(item['content'] ?? '') : MarkdownBody(data: item['content'] ?? '')));
@@ -104,6 +104,8 @@ class _ChatScreenState extends State<ChatScreen> {
       const SizedBox(width: 8), IconButton.filled(onPressed: _loading ? null : _send, icon: const Icon(Icons.send_rounded)),
     ]))),
   ]);
+
+  Widget _quickPrompt(String value) => ActionChip(label: Text(value), onPressed: _loading ? null : () { _controller.text = value; _controller.selection = TextSelection.collapsed(offset: value.length); });
 
   @override Widget build(BuildContext context) {
     final pages = [const DashboardScreen(), _buildChat(), const MarketCenterScreen(), const JournalScreen(), const SettingsScreen(), const ToolsScreen()];

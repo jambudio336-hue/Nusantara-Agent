@@ -103,7 +103,7 @@ class _NetGateViewState extends State<_NetGateView>
                         ),
                         const SizedBox(height: 14),
                         const Text(
-                          'NO CONNECTION',
+                          'ONLINE CHECK',
                           style: TextStyle(
                             color: MzTheme.red,
                             fontSize: 20,
@@ -115,8 +115,8 @@ class _NetGateViewState extends State<_NetGateView>
                         Text(
                           _online == null
                               ? 'Memeriksa koneksi internet...'
-                              : 'Mazkiplay AI membutuhkan koneksi internet. '
-                                'Hubungkan jaringan lalu tunggu pengecekan berikutnya.',
+                              : 'Mazkiplay AI memakai layanan online dan realtime. '
+                                'Pengecekan koneksi akan diperbarui otomatis.',
                           textAlign: TextAlign.center,
                           style: const TextStyle(color: Colors.white60),
                         ),
