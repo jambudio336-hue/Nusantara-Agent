@@ -78,7 +78,7 @@ class _ChatScreenState extends State<ChatScreen> {
       Expanded(child: TextField(controller: _controller, textInputAction: TextInputAction.send, onSubmitted: (_) => _send(), minLines: 1, maxLines: 5, decoration: const InputDecoration(hintText: 'Ketik pesan...'))),
       const SizedBox(width: 8),
       IconButton.filled(onPressed: _loading ? null : _send, icon: const Icon(Icons.send_rounded)),
-    ])),
+    ]))),
   ]);
 
   @override Widget build(BuildContext context) {
