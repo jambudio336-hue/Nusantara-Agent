@@ -1,64 +1,35 @@
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive/hive.dart';
 
-class StorageService {
-  static const _boxName = 'mazkiplay_ai';
-  static const _apiKey = 'openrouter_api_key';
-  static const _model = 'openrouter_model';
-  static const _journal = 'journal_entries';
+class Store {
+  static final Box s = Hive.box('store');
+  static final Box j = Hive.box('journal');
 
-  late Box _box;
-  late SharedPreferences _prefs;
+  static String? get apiKey => s.get('apiKey') as String?;
+  static set apiKey(String? v) => s.put('apiKey', v);
+  static bool get hasKey => (apiKey ?? '').isNotEmpty;
 
-  Future<void> init() async {
-    await Hive.initFlutter();
-    _box = await Hive.openBox(_boxName);
-    _prefs = await SharedPreferences.getInstance();
-  }
+  static String get model => s.get('model') ?? 'openai/gpt-4o-mini';
+  static set model(String v) => s.put('model', v);
 
-  String? get apiKey => _prefs.getString(_apiKey);
-
-  Future<void> saveApiKey(String value) async {
-    await _prefs.setString(_apiKey, value.trim());
-  }
-
-  Future<void> clearApiKey() async {
-    await _prefs.remove(_apiKey);
-  }
-
-  String get model => _prefs.getString(_model) ?? 'openai/gpt-5-mini';
-
-  Future<void> saveModel(String value) async {
-    await _prefs.setString(_model, value.trim());
-  }
-
-  List<Map<String, dynamic>> get journalEntries {
-    final raw = _box.get(_journal, defaultValue: <dynamic>[]);
-    return (raw as List)
+  static List<Map<String, String>> get history {
+    final raw = s.get('history', defaultValue: <dynamic>[]) as List;
+    return raw
         .whereType<Map>()
-        .map((entry) => Map<String, dynamic>.from(entry))
-        .toList()
-        .reversed
+        .map((e) => Map<String, String>.from(e))
         .toList();
   }
 
-  Future<void> addJournalEntry({
-    required String title,
-    required String content,
-  }) async {
-    final entries = journalEntries.reversed.toList();
-    entries.add({
-      'title': title.trim(),
-      'content': content.trim(),
-      'createdAt': DateTime.now().toIso8601String(),
-    });
-    await _box.put(_journal, entries);
+  static set history(List<Map<String, String>> v) => s.put('history', v);
+
+  static void clearHistory() => s.put('history', <dynamic>[]);
+
+  static double get capital => (j.get('capital') ?? 1000.0).toDouble();
+  static set capital(double v) => j.put('capital', v);
+
+  static List<Map> get trades {
+    final raw = j.get('trades', defaultValue: <dynamic>[]) as List;
+    return raw.map((e) => Map<String, dynamic>.from(e)).toList();
   }
 
-  Future<void> deleteJournalEntry(int index) async {
-    final entries = journalEntries.reversed.toList();
-    if (index < 0 || index >= entries.length) return;
-    entries.removeAt(index);
-    await _box.put(_journal, entries);
-  }
+  static set trades(List<Map> v) => j.put('trades', v);
 }
