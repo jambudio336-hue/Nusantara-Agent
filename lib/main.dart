@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'theme.dart';
 import 'screens/welcome.dart';
 import 'screens/chat.dart';
+import 'services/connectivity_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,21 +28,23 @@ class MazkiApp extends StatelessWidget {
       title: 'Mazkiplay AI',
       debugShowCheckedModeBanner: false,
       theme: MzTheme.dark,
-      home: FutureBuilder<SharedPreferences>(
-        future: SharedPreferences.getInstance(),
-        builder: (_, snap) {
-          if (!snap.hasData) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(color: MzTheme.red),
-              ),
-            );
-          }
+      home: NetGate.guard(
+        FutureBuilder<SharedPreferences>(
+          future: SharedPreferences.getInstance(),
+          builder: (_, snap) {
+            if (!snap.hasData) {
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(color: MzTheme.red),
+                ),
+              );
+            }
 
-          return (snap.data!.getBool('agreed') ?? false)
-              ? const ChatScreen()
-              : const WelcomeScreen();
-        },
+            return (snap.data!.getBool('agreed') ?? false)
+                ? const ChatScreen()
+                : const WelcomeScreen();
+          },
+        ),
       ),
     );
   }
