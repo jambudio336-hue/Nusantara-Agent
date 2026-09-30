@@ -7,6 +7,7 @@ import 'journal.dart';
 import 'settings.dart';
 import 'tools.dart';
 import 'ops/ops_center.dart';
+import 'dashboard.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -80,7 +81,7 @@ class _ChatScreenState extends State<ChatScreen> {
   ]);
 
   @override Widget build(BuildContext context) {
-    final pages = [_buildChat(), const ToolsScreen(), const JournalScreen(), const SettingsScreen()];
+    final pages = [const DashboardScreen(), _buildChat(), const ToolsScreen(), const JournalScreen(), const SettingsScreen()];
     return ValueListenableBuilder<bool>(valueListenable: GhostMode.active, builder: (_, ghost, __) => Scaffold(
       backgroundColor: GhostMode.bg,
       appBar: AppBar(
@@ -93,6 +94,7 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: pages[_tab],
       bottomNavigationBar: NavigationBar(selectedIndex: _tab, onDestinationSelected: (value) => setState(() => _tab = value), destinations: const [
+        NavigationDestination(icon: Icon(Icons.dashboard_outlined), selectedIcon: Icon(Icons.dashboard), label: 'Dashboard'),
         NavigationDestination(icon: Icon(Icons.chat_bubble_outline), selectedIcon: Icon(Icons.chat_bubble), label: 'Chat'),
         NavigationDestination(icon: Icon(Icons.build_outlined), selectedIcon: Icon(Icons.build), label: 'Tools'),
         NavigationDestination(icon: Icon(Icons.menu_book_outlined), selectedIcon: Icon(Icons.menu_book), label: 'Journal'),
