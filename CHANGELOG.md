@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased - 2026-10-01
+- Added premium live intelligence dashboard as the primary workspace.
+- Added consent/disclaimer onboarding with required acknowledgement.
+- Added responsive Nusantara accent palette and dashboard status cards.
+- Added desktop/terminal agent foundation with Ollama and OpenRouter provider modes.
+- Added localhost FastAPI runtime with scoped workspace configuration.
+- Expanded README with full-stack architecture, security model, and roadmap.
+
 ## 0.3.0 - 2026-09-30
 - Added Forex Agent workspace with Scalping, Intraday, and Swing modes.
 - Added public market candle ingestion and live snapshot timestamp.
