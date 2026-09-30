@@ -13,6 +13,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final TextEditingController api;
   late final TextEditingController hibp;
   late final TextEditingController model;
+  late final TextEditingController twelve;
 
   @override
   void initState() {
@@ -20,6 +21,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     api = TextEditingController(text: Store.apiKey ?? '');
     hibp = TextEditingController(text: Store.hibpKey ?? '');
     model = TextEditingController(text: Store.model);
+    twelve = TextEditingController(text: Store.s.get('twelveDataKey')?.toString() ?? '');
   }
 
   @override
@@ -27,6 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     api.dispose();
     hibp.dispose();
     model.dispose();
+    twelve.dispose();
     super.dispose();
   }
 
@@ -34,6 +37,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Store.apiKey = api.text.trim().isEmpty ? null : api.text.trim();
     Store.hibpKey = hibp.text.trim().isEmpty ? null : hibp.text.trim();
     Store.model = model.text.trim().isEmpty ? 'openai/gpt-4o-mini' : model.text.trim();
+    Store.s.put('twelveDataKey', twelve.text.trim());
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pengaturan disimpan.')));
     setState(() {});
   }
@@ -85,6 +89,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             prefixIcon: Icon(Icons.shield_outlined),
             helperText: 'Dipakai untuk pemeriksaan breach email. Disimpan lokal di perangkat.',
           )),
+        const SizedBox(height: 14),
+        TextField(controller: twelve, obscureText: true,
+          decoration: const InputDecoration(labelText: 'Twelve Data API Key', prefixIcon: Icon(Icons.show_chart), helperText: 'Dipakai untuk candle Forex/Crypto dan polling live.')),
         const SizedBox(height: 14),
         TextField(controller: model,
           decoration: const InputDecoration(labelText: 'Model', prefixIcon: Icon(Icons.psychology_outlined))),
