@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'trading.dart';
 
 class ToolsScreen extends StatefulWidget {
   const ToolsScreen({super.key});
@@ -60,6 +61,13 @@ class _ToolsScreenState extends State<ToolsScreen> {
           title: 'File Picker',
           subtitle: _selectedFile ?? 'Pilih dokumen dari perangkat',
           onTap: _pickFile,
+        ),
+        const SizedBox(height: 10),
+        _ToolCard(
+          icon: Icons.candlestick_chart,
+          title: 'Live Trading Terminal',
+          subtitle: 'Forex • Gold • Crypto • indicators • risk',
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TradingScreen())),
         ),
         const SizedBox(height: 10),
         _ToolCard(
