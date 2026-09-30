@@ -12,6 +12,6 @@ class MarketData {
   static Uri chartUri(String symbol, String interval) => Uri.https(
     'www.tradingview.com',
     '/chart/',
-    {'symbol': tradingViewSymbol(symbol), 'interval': interval},
+    {'symbol': tradingViewSymbol(symbol), 'interval': interval, 'theme': 'dark'},
   );
 }
