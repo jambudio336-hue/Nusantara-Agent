@@ -12,6 +12,9 @@ class Store {
   static set hibpKey(String? v) => v == null ? s.delete('hibpKey') : s.put('hibpKey', v);
   static bool get hasHibpKey => (hibpKey ?? '').isNotEmpty;
 
+  static String? get itickKey => s.get('itickKey') as String?;
+  static set itickKey(String? v) => v == null ? s.delete('itickKey') : s.put('itickKey', v);
+
   static String get model => s.get('model')?.toString() ?? 'openai/gpt-4o-mini';
   static set model(String v) => s.put('model', v);
 
