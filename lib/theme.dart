@@ -24,6 +24,8 @@ class MzTheme {
       scaffoldBackgroundColor: background,
       colorScheme: scheme,
       appBarTheme: AppBarTheme(backgroundColor: appBar ?? card, elevation: 0, centerTitle: false),
+      statusBarColor: background,
+      navigationBarColor: background,
       cardTheme: CardThemeData(color: card, elevation: 0, margin: EdgeInsets.zero, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18), side: const BorderSide(color: Colors.white10))),
       inputDecorationTheme: InputDecorationTheme(
         filled: true, fillColor: cardAlt,

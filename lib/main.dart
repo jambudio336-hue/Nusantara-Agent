@@ -5,7 +5,6 @@ import 'theme.dart';
 import 'screens/intro.dart';
 import 'screens/welcome.dart';
 import 'screens/chat.dart';
-import 'services/connectivity_service.dart';
 import 'services/ghost_mode.dart';
 import 'services/storage.dart';
 
@@ -30,8 +29,7 @@ class MazkiApp extends StatelessWidget {
         title: 'Mazkiplay AI',
         debugShowCheckedModeBanner: false,
         theme: ghost ? MzTheme.ghost : MzTheme.dark,
-        home: NetGate.guard(
-          FutureBuilder<SharedPreferences>(
+        home: FutureBuilder<SharedPreferences>(
             future: SharedPreferences.getInstance(),
             builder: (context, snap) {
               if (!snap.hasData) {
@@ -45,7 +43,6 @@ class MazkiApp extends StatelessWidget {
               );
             },
           ),
-        ),
       ),
     );
   }

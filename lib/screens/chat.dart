@@ -109,12 +109,13 @@ class _ChatScreenState extends State<ChatScreen> {
     final pages = [const DashboardScreen(), _buildChat(), const MarketCenterScreen(), const JournalScreen(), const SettingsScreen(), const ToolsScreen()];
     return ValueListenableBuilder<bool>(valueListenable: GhostMode.active, builder: (_, ghost, __) => Scaffold(
       backgroundColor: GhostMode.bg,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(title: ghost ? Text('[REDACTED]', style: TextStyle(color: GhostMode.accent, fontFamily: 'monospace')) : const Text('MAZKIPLAY AI', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.5)), actions: [
         if (_tab == 1) IconButton(tooltip: 'Chat baru', onPressed: _newChat, icon: const Icon(Icons.add_comment_outlined)),
         IconButton(tooltip: 'Ops Center', onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OpsCenter())), icon: const Icon(Icons.terminal)),
         IconButton(tooltip: 'Ghost Mode', icon: Icon(Icons.visibility_off, color: ghost ? const Color(0xFF00FF41) : Colors.white54), onPressed: () { GhostMode.toggle(); final on = GhostMode.active.value; ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: GhostMode.card, content: Text(on ? 'GHOST MODE AKTIF.' : 'Ghost Mode off.'))); }),
       ],),
-      body: pages[_tab],
+      body: SafeArea(top: false, child: AnimatedSwitcher(duration: const Duration(milliseconds: 180), child: KeyedSubtree(key: ValueKey(_tab), child: pages[_tab]))),
       bottomNavigationBar: NavigationBar(selectedIndex: _tab, onDestinationSelected: (value) => setState(() => _tab = value), destinations: const [
         NavigationDestination(icon: Icon(Icons.dashboard_outlined), selectedIcon: Icon(Icons.dashboard), label: 'Dashboard'),
         NavigationDestination(icon: Icon(Icons.chat_bubble_outline), selectedIcon: Icon(Icons.chat_bubble), label: 'Chat'),
