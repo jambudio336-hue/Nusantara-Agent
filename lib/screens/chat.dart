@@ -89,7 +89,7 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           IconButton(tooltip: 'Ops Center', onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OpsCenter())), icon: const Icon(Icons.terminal)),
           IconButton(tooltip: 'Ghost Mode', icon: Icon(Icons.visibility_off, color: ghost ? const Color(0xFF00FF41) : Colors.white54), onPressed: () { GhostMode.toggle(); final on = GhostMode.active.value; ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: GhostMode.card, content: Text(on ? 'GHOST MODE AKTIF — tema visual Matrix aktif.' : 'Ghost Mode off. Kembali ke tema Mazkiplay.'))); }),
-          IconButton(tooltip: 'Settings', onPressed: () => setState(() => _tab = 3), icon: const Icon(Icons.settings_outlined)),
+          IconButton(tooltip: 'Settings', onPressed: () => setState(() => _tab = 4), icon: const Icon(Icons.settings_outlined)),
         ],
       ),
       body: pages[_tab],
