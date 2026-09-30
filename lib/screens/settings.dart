@@ -1,16 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../services/storage.dart';
-import '../theme.dart';
-
-const MODELS = [
-  'openai/gpt-4o-mini',
-  'openai/gpt-4o',
-  'anthropic/claude-sonnet-4',
-  'deepseek/deepseek-chat',
-  'google/gemini-2.0-flash-001',
-  'meta-llama/llama-3.1-405b-instruct',
-];
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -20,167 +10,114 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  late final TextEditingController keyCtrl;
-  late final TextEditingController capitalCtrl;
-  late String model;
-  bool obscureKey = true;
+  late final TextEditingController _apiKeyController;
+  late final TextEditingController _modelController;
 
   @override
   void initState() {
     super.initState();
-    keyCtrl = TextEditingController(text: Store.apiKey ?? '');
-    model = MODELS.contains(Store.model) ? Store.model : MODELS.first;
-    capitalCtrl = TextEditingController(
-      text: Store.capital.toStringAsFixed(2),
-    );
+    _apiKeyController = TextEditingController(text: Store.apiKey ?? '');
+    _modelController = TextEditingController(text: Store.model);
   }
 
   @override
   void dispose() {
-    keyCtrl.dispose();
-    capitalCtrl.dispose();
+    _apiKeyController.dispose();
+    _modelController.dispose();
     super.dispose();
   }
 
-  void _save() {
-    final key = keyCtrl.text.trim();
-    final capital = double.tryParse(
-          capitalCtrl.text.trim().replaceAll(',', '.'),
-        ) ??
-        1000;
+  Future<void> _save() async {
+    Store.apiKey = _apiKeyController.text.trim().isEmpty
+        ? null
+        : _apiKeyController.text.trim();
+    Store.model = _modelController.text.trim().isEmpty
+        ? 'openai/gpt-4o-mini'
+        : _modelController.text.trim();
 
-    Store.apiKey = key.isEmpty ? null : key;
-    Store.model = model;
-    Store.capital = capital < 0 ? 0 : capital;
-
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        backgroundColor: MzTheme.red,
-        content: Text('✅ Pengaturan tersimpan di storage HP'),
-      ),
+      const SnackBar(content: Text('Pengaturan disimpan.')),
     );
+    setState(() {});
+  }
 
-    Navigator.pop(context);
+  Future<void> _clearKey() async {
+    Store.apiKey = null;
+    _apiKeyController.clear();
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _clearHistory() async {
+    Store.clearHistory();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Riwayat chat dihapus.')),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          const Text(
-            'OpenRouter API Key',
-            style: TextStyle(
-              color: Colors.white70,
-              fontWeight: FontWeight.bold,
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        const Text(
+          'Settings',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          Store.hasKey
+              ? 'OpenRouter siap digunakan.'
+              : 'Masukkan API key OpenRouter untuk mengaktifkan chat.',
+          style: const TextStyle(color: Colors.white70),
+        ),
+        const SizedBox(height: 22),
+        TextField(
+          controller: _apiKeyController,
+          obscureText: true,
+          decoration: const InputDecoration(
+            labelText: 'OpenRouter API Key',
+            prefixIcon: Icon(Icons.key_outlined),
+          ),
+        ),
+        const SizedBox(height: 14),
+        TextField(
+          controller: _modelController,
+          decoration: const InputDecoration(
+            labelText: 'Model',
+            prefixIcon: Icon(Icons.psychology_outlined),
+          ),
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton.icon(
+          onPressed: _save,
+          icon: const Icon(Icons.save_outlined),
+          label: const Text('Simpan'),
+        ),
+        const SizedBox(height: 10),
+        OutlinedButton.icon(
+          onPressed: _clearKey,
+          icon: const Icon(Icons.delete_outline),
+          label: const Text('Hapus API Key'),
+        ),
+        const SizedBox(height: 10),
+        OutlinedButton.icon(
+          onPressed: _clearHistory,
+          icon: const Icon(Icons.history_toggle_off),
+          label: const Text('Hapus Riwayat Chat'),
+        ),
+        const SizedBox(height: 24),
+        const Card(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Text(
+              'API key disimpan lokal di perangkat dan tidak ditanam di source code.',
+              style: TextStyle(color: Colors.white70),
             ),
           ),
-          const SizedBox(height: 4),
-          const Text(
-            'Dapatkan API key dari OpenRouter. Key disimpan lokal di perangkat.',
-            style: TextStyle(
-              color: Colors.white38,
-              fontSize: 12,
-            ),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: keyCtrl,
-            obscureText: obscureKey,
-            autocorrect: false,
-            enableSuggestions: false,
-            decoration: InputDecoration(
-              hintText: 'sk-or-v1-...',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              suffixIcon: IconButton(
-                tooltip: obscureKey ? 'Tampilkan API key' : 'Sembunyikan API key',
-                icon: Icon(
-                  obscureKey
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
-                ),
-                onPressed: () {
-                  setState(() => obscureKey = !obscureKey);
-                },
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Model AI',
-            style: TextStyle(
-              color: Colors.white70,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          DropdownButtonFormField<String>(
-            value: model,
-            dropdownColor: MzTheme.card,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            items: MODELS
-                .map(
-                  (m) => DropdownMenuItem<String>(
-                    value: m,
-                    child: Text(
-                      m,
-                      style: const TextStyle(fontSize: 13),
-                    ),
-                  ),
-                )
-                .toList(),
-            onChanged: (v) {
-              if (v != null) {
-                setState(() => model = v);
-              }
-            },
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Modal Awal Jurnal Trading ($)',
-            style: TextStyle(
-              color: Colors.white70,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: capitalCtrl,
-            keyboardType: const TextInputType.numberWithOptions(
-              decimal: true,
-            ),
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              prefixText: '$ ',
-            ),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: MzTheme.red,
-              foregroundColor: Colors.white,
-              minimumSize: const Size.fromHeight(50),
-            ),
-            onPressed: _save,
-            child: const Text(
-              'SIMPAN',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
