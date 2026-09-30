@@ -56,5 +56,5 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
     Card(child: Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('AI ENGINE ACTIVE', style: TextStyle(color: MzTheme.cyan, fontWeight: FontWeight.w900, letterSpacing: 1)), const SizedBox(height: 10), const Text('✓ OpenRouter direct request\n✓ Auto model discovery & failover\n✓ Bahasa Indonesia friendly + structured output\n✓ Coding, data, trading research, OSINT publik\n✓ Security defensif dan authorized testing\n✓ Image/file attachment workflow', style: TextStyle(color: Colors.white70, height: 1.55)), const SizedBox(height: 10), const Text('AI tidak menjalankan serangan tanpa izin dan tidak mengarang data live.', style: TextStyle(color: Colors.orangeAccent, fontSize: 11))]))),
     const SizedBox(height: 12),
     Card(child: Padding(padding: const EdgeInsets.all(16), child: const Text('ONLINE-FIRST MODE\nData dan AI diambil dari layanan online. API key tetap disimpan lokal di perangkat; aplikasi tidak menanam secret di backend. Dashboard refresh otomatis setiap 20 detik.', style: TextStyle(color: Colors.white60, height: 1.45)))),
-  ]);
+  ]));
 }
