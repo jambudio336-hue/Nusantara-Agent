@@ -25,18 +25,18 @@ jobs:
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: Nusantara-Agent-APK-v0.6.0
+          name: Nusantara-Agent-APK-v0.7.0
           path: app/build/outputs/apk/debug/app-debug.apk
       - name: Upload release APK
         uses: actions/upload-artifact@v4
         with:
-          name: Nusantara-Agent-Release-APK-v0.6.0
+          name: Nusantara-Agent-Release-APK-v0.7.0
           path: app/build/outputs/apk/release/app-release-unsigned.apk
-      - name: Publish v0.6.0
+      - name: Publish v0.7.0
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.6.0
-          name: Nusantara Agent v0.6.0
+          tag_name: v0.7.0
+          name: Nusantara Agent v0.7.0
           files: |
             app/build/outputs/apk/debug/app-debug.apk
             app/build/outputs/apk/release/app-release-unsigned.apk
