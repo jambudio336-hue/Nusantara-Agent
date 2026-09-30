@@ -248,7 +248,7 @@ public class MainActivity extends Activity {
     private String loadKey(){
         try{
             String z=prefs.getString("key",""); if(z.isEmpty()||secret==null)return "";
-            String[] p=z.split("\.",2); if(p.length!=2)return "";
+            int dot=z.indexOf('.'); if(dot<0)return ""; String[] p=new String[]{z.substring(0,dot),z.substring(dot+1)};
             Cipher c=Cipher.getInstance("AES/GCM/NoPadding"); c.init(Cipher.DECRYPT_MODE,secret,new GCMParameterSpec(128,Base64.decode(p[0],Base64.NO_WRAP)));
             return new String(c.doFinal(Base64.decode(p[1],Base64.NO_WRAP)),StandardCharsets.UTF_8);
         }catch(Exception e){return "";}
@@ -258,7 +258,7 @@ public class MainActivity extends Activity {
         try{
             PdfDocument d=new PdfDocument(); PdfDocument.PageInfo pi=new PdfDocument.PageInfo.Builder(595,842,1).create(); PdfDocument.Page p=d.startPage(pi);
             Canvas c=p.getCanvas(); Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG); paint.setTextSize(13); int y=40; int page=1;
-            String[] words=body.replace("\r","").split("\s+"); String line=who+": "; float max=535;
+            String[] words=body.split(" "); String line=who+": "; float max=535;
             for(String w:words){
                 String test=line+(line.trim().isEmpty()?w:" "+w);
                 if(paint.measureText(test)>max){c.drawText(line,30,y,paint);y+=20;line=w;if(y>800){d.finishPage(p);p=d.startPage(new PdfDocument.PageInfo.Builder(595,842,++page).create());c=p.getCanvas();y=40;}}
