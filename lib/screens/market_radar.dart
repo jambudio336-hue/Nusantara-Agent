@@ -1,14 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import '../services/market_data.dart';
-
-class MarketRadarScreen extends StatelessWidget {
-  const MarketRadarScreen({super.key});
-  Color tone(String s)=>s=='BUY'?Colors.greenAccent:s=='SELL'?Colors.redAccent:Colors.amberAccent;
-  @override Widget build(BuildContext context)=>Scaffold(backgroundColor:const Color(0xFF080A10),appBar:AppBar(title:const Text('MARKET RADAR')),body:ListView(padding:const EdgeInsets.all(12),children:[
-    const Text('Satu layar untuk memantau seluruh watchlist. Data dan score tampil hanya setelah provider berhasil mengembalikan candle.',style:TextStyle(color:Colors.white60)),
-    const SizedBox(height:12),
-    Wrap(spacing:6,children:['Strong Buy','Buy','Neutral','Sell','Strong Sell','High volatility','Breakout','Reversal','News event'].map((x)=>FilterChip(label:Text(x),selected:false,onSelected:(_){ })).toList()),
-    const SizedBox(height:14),
-    ...[...MarketData.forex,...MarketData.crypto].map((s)=>Card(color:const Color(0xFF121722),child:ListTile(leading:CircleAvatar(backgroundColor:Colors.white10,child:Text(s.substring(0,1))),title:Text(s),subtitle:const Text('Waiting for live market data'),trailing:const Text('—',style:TextStyle(fontSize:18))))
-  ]));
+import '../models/market_data.dart';
+import '../services/market_scanner.dart';
+class MarketRadarScreen extends StatefulWidget{const MarketRadarScreen({super.key});@override State<MarketRadarScreen> createState()=>_MarketRadarState();}
+class _MarketRadarState extends State<MarketRadarScreen>{List<MarketQuote> quotes=[];Timer? timer;@override void initState(){super.initState();_scan();timer=Timer.periodic(const Duration(seconds:30),(_)=>_scan());}@override void dispose(){timer?.cancel();super.dispose();}Future<void> _scan()async{try{final q=await MarketScanner.scan();if(mounted)setState(()=>quotes=q);}catch(_){}}Color tone(double x)=>x>1?Colors.greenAccent:x< -1?Colors.redAccent:Colors.amberAccent;@override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('MARKET RADAR')),body:RefreshIndicator(onRefresh:_scan,child:ListView(padding:const EdgeInsets.all(12),children:[Wrap(spacing:6,children:['Strong Buy','Buy','Neutral','Sell','Strong Sell','High volatility','Breakout','Reversal','News event'].map((x)=>FilterChip(label:Text(x),selected:false,onSelected:(_){ })).toList()),const SizedBox(height:14),...quotes.map((q)=>Card(child:ListTile(title:Text(q.symbol),subtitle:Text(q.provider+' • '+q.last.toStringAsFixed(q.last>100?2:6)),trailing:Text((q.changePercent>1?'BUY':q.changePercent< -1?'SELL':'WAIT')+' '+q.changePercent.toStringAsFixed(2)+'%',style:TextStyle(color:tone(q.changePercent),fontWeight:FontWeight.w900))))])));}
 }
