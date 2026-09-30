@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme.dart';
 import '../../widgets/animations.dart';
-import '../../widgets/responsive.dart';
 import '../../services/intel_api.dart';
 import '../../services/targets_store.dart';
 
