@@ -9,6 +9,7 @@ import 'ssl_auditor.dart';
 import 'breach_monitor.dart';
 import 'paste_monitor.dart';
 import 'dashboard.dart';
+import 'vault_notes.dart';
 
 class OpsCenter extends StatelessWidget {
   const OpsCenter({super.key});
@@ -20,6 +21,7 @@ class OpsCenter extends StatelessWidget {
     ['Breach Monitor', Icons.broken_image, 'Breach check & timeline', BreachMonitorScreen()],
     ['Paste Hunter', Icons.search, 'Cari referensi paste publik', PasteMonitorScreen()],
     ['Dashboard', Icons.dashboard, 'Target tracker operasi', OpsDashboardScreen()],
+    ['Vault Notes', Icons.lock_clock, 'Catatan auto-hapus', VaultNotesScreen()],
   ];
 
   @override
