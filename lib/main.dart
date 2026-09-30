@@ -1,39 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'screens/chat.dart';
-import 'screens/settings.dart';
-import 'screens/welcome.dart';
-import 'services/storage.dart';
 import 'theme.dart';
+import 'screens/welcome.dart';
+import 'screens/chat.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final storage = StorageService();
-  await storage.init();
+  await Hive.initFlutter();
+  await Hive.openBox('store');
+  await Hive.openBox('journal');
 
-  runApp(
-    StorageScope(
-      storage: storage,
-      child: const MazkiplayAIApp(),
-    ),
-  );
+  runApp(const MazkiApp());
 }
 
-class MazkiplayAIApp extends StatelessWidget {
-  const MazkiplayAIApp({super.key});
+class MazkiApp extends StatelessWidget {
+  const MazkiApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Mazkiplay AI',
       debugShowCheckedModeBanner: false,
-      theme: MazkiplayTheme.dark(),
-      home: const WelcomeScreen(),
-      routes: {
-        '/chat': (_) => const ChatScreen(),
-        '/settings': (_) => const SettingsScreen(),
-      },
+      theme: MzTheme.dark,
+      home: FutureBuilder<SharedPreferences>(
+        future: SharedPreferences.getInstance(),
+        builder: (_, snap) {
+          if (!snap.hasData) {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(color: MzTheme.red),
+              ),
+            );
+          }
+
+          return (snap.data!.getBool('agreed') ?? false)
+              ? const ChatScreen()
+              : const WelcomeScreen();
+        },
+      ),
     );
   }
 }
