@@ -52,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen>{
   return ValueListenableBuilder<bool>(valueListenable:GhostMode.active,builder:(_,ghost,__)=>Scaffold(
    backgroundColor:GhostMode.bg,
    appBar:AppBar(
-    title:Text(ghost?'Mazkiplay AI • GHOST':'Mazkiplay AI'),
+    title:ValueListenableBuilder<bool>(valueListenable:GhostMode.active,builder:(_,on,__)=>on?Text('[REDACTED]',style:TextStyle(color:GhostMode.accent,fontFamily:'monospace')):Image.asset('assets/logo.png',width:32)),
     actions:[
      IconButton(tooltip:'Ops Center',onPressed:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>const OpsCenter())),icon:const Icon(Icons.terminal)),
      IconButton(
