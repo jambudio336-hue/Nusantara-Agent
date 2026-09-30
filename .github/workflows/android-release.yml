@@ -24,18 +24,18 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Nusantara-Agent-APK
+          name: Nusantara-Agent-APK-v0.4.0
           path: app/build/outputs/apk/debug/app-debug.apk
-      - name: Publish v0.3.0 release
+      - name: Publish v0.4.0 release
         if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.3.0
-          name: Nusantara Agent v0.3.0
+          tag_name: v0.4.0
+          name: Nusantara Agent v0.4.0
           files: app/build/outputs/apk/debug/app-debug.apk
           generate_release_notes: true
       - name: Publish tagged release
-        if: startsWith(github.ref, 'refs/tags/v') && github.ref != 'refs/tags/v0.3.0'
+        if: startsWith(github.ref, 'refs/tags/v') && github.ref != 'refs/tags/v0.4.0'
         uses: softprops/action-gh-release@v2
         with:
           files: app/build/outputs/apk/debug/app-debug.apk
