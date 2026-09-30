@@ -12,6 +12,7 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox('store');
   await Hive.openBox('journal');
+  await Hive.openBox('targets');
 
   runApp(const MazkiApp());
 }
