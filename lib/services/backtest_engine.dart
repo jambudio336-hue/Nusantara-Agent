@@ -1,0 +1,13 @@
+import 'dart:math';
+import '../models/market_data.dart';
+import 'market_engine.dart';
+class BacktestResult { final int trades,wins; final double winRate,profitFactor,maxDrawdown,expectancy,averageRR; const BacktestResult({required this.trades,required this.wins,required this.winRate,required this.profitFactor,required this.maxDrawdown,required this.expectancy,required this.averageRR}); }
+class BacktestEngine {
+  static BacktestResult run(List<Candle> candles,{double riskR=1,double rewardR=2}) {
+    if(candles.length<60)return const BacktestResult(trades:0,wins:0,winRate:0,profitFactor:0,maxDrawdown:0,expectancy:0,averageRR:0);
+    var wins=0,trades=0;var grossWin=0.0,grossLoss=0.0,equity=0.0,peak=0.0,maxDd=0.0;
+    for(var i=50;i<candles.length-1;i++){final prices=candles.sublist(0,i+1).map((e)=>e.close).toList();final r=MarketEngine.rsi(prices);final last=prices.last;if(r>55||r<45){trades++;final win=(r>55&&candles[i+1].close>last)||(r<45&&candles[i+1].close<last);if(win){wins++;equity+=rewardR;grossWin+=rewardR;}else{equity-=riskR;grossLoss+=riskR;}if(equity>peak)peak=equity;maxDd=max(maxDd,peak-equity);}}
+    final pf=grossLoss==0?(grossWin>0?double.infinity:0):grossWin/grossLoss;
+    return BacktestResult(trades:trades,wins:wins,winRate:trades==0?0:wins/trades*100,profitFactor:pf,maxDrawdown:maxDd,expectancy:trades==0?0:equity/trades,averageRR:rewardR/riskR);
+  }
+}
