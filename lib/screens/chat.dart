@@ -18,13 +18,16 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
-  final _service = OpenRouterService();
 
-  final List<Map<String, String>> _messages = [];
+  late List<Map<String, String>> _messages;
   bool _loading = false;
   int _tab = 0;
 
-  StorageService get _storage => StorageScope.of(context);
+  @override
+  void initState() {
+    super.initState();
+    _messages = List<Map<String, String>>.from(Store.history);
+  }
 
   @override
   void dispose() {
@@ -42,28 +45,41 @@ class _ChatScreenState extends State<ChatScreen> {
       _messages.add({'role': 'user', 'content': text});
       _controller.clear();
     });
+    Store.history = List<Map<String, String>>.from(_messages);
 
     try {
-      final reply = await _service.chat(
-        apiKey: _storage.apiKey ?? '',
-        model: _storage.model,
-        messages: List<Map<String, String>>.from(_messages),
+      final reply = await OpenRouter.chat(
+        _messages
+            .map<Map<String, dynamic>>(
+              (message) => {
+                'role': message['role']!,
+                'content': message['content']!,
+              },
+            )
+            .toList(),
       );
 
       if (!mounted) return;
-      setState(() => _messages.add({
-            'role': 'assistant',
-            'content': reply,
-          }));
+      setState(() {
+        _messages.add({
+          'role': 'assistant',
+          'content': reply,
+        });
+      });
+      Store.history = List<Map<String, String>>.from(_messages);
     } catch (error) {
       if (!mounted) return;
-      setState(() => _messages.add({
-            'role': 'assistant',
-            'content': '⚠️ ' + error.toString(),
-          }));
+      setState(() {
+        _messages.add({
+          'role': 'assistant',
+          'content': '⚠️ ' + error.toString(),
+        });
+      });
+      Store.history = List<Map<String, String>>.from(_messages);
     } finally {
       if (!mounted) return;
       setState(() => _loading = false);
+
       await Future<void>.delayed(const Duration(milliseconds: 50));
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
@@ -73,56 +89,6 @@ class _ChatScreenState extends State<ChatScreen> {
         );
       }
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final pages = [
-      _buildChat(),
-      const ToolsScreen(),
-      const JournalScreen(),
-      const SettingsScreen(),
-    ];
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mazkiplay AI'),
-        actions: [
-          IconButton(
-            tooltip: 'Settings',
-            onPressed: () => setState(() => _tab = 3),
-            icon: const Icon(Icons.settings_outlined),
-          ),
-        ],
-      ),
-      body: pages[_tab],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _tab,
-        onDestinationSelected: (value) => setState(() => _tab = value),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.chat_bubble_outline),
-            selectedIcon: Icon(Icons.chat_bubble),
-            label: 'Chat',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.build_outlined),
-            selectedIcon: Icon(Icons.build),
-            label: 'Tools',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.menu_book_outlined),
-            selectedIcon: Icon(Icons.menu_book),
-            label: 'Journal',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildChat() {
@@ -159,7 +125,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         margin: const EdgeInsets.only(bottom: 10),
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: user ? MazkiplayTheme.redDark : MazkiplayTheme.card,
+                          color: user ? MzTheme.red : MzTheme.card,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: user
@@ -210,6 +176,56 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final pages = [
+      _buildChat(),
+      const ToolsScreen(),
+      const JournalScreen(),
+      const SettingsScreen(),
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Mazkiplay AI'),
+        actions: [
+          IconButton(
+            tooltip: 'Settings',
+            onPressed: () => setState(() => _tab = 3),
+            icon: const Icon(Icons.settings_outlined),
+          ),
+        ],
+      ),
+      body: pages[_tab],
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _tab,
+        onDestinationSelected: (value) => setState(() => _tab = value),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.chat_bubble_outline),
+            selectedIcon: Icon(Icons.chat_bubble),
+            label: 'Chat',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.build_outlined),
+            selectedIcon: Icon(Icons.build),
+            label: 'Tools',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.menu_book_outlined),
+            selectedIcon: Icon(Icons.menu_book),
+            label: 'Journal',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
     );
   }
 }
