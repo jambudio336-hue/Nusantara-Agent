@@ -51,7 +51,7 @@ class MarketEngine {
   static Map<String, dynamic> analyze(List<MarketCandle> c) {
     if (c.length < 30) return {'signal':'WAIT','score':50,'trend':'UNKNOWN'};
     final closes = c.map((x) => x.close).toList();
-    final e20 = ema(closes, 20), e50 = ema(closes, 50), e200 = ema(closes, closes.length.clamp(50, 200));
+    final e20 = ema(closes, 20), e50 = ema(closes, 50), e200 = ema(closes, closes.length.clamp(50, 200).toInt());
     final r = rsi(closes);
     final a = atr(c);
     var score = 50;
