@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/storage.dart';
+import '../services/targets_store.dart';
 import '../widgets/animations.dart';
 import 'welcome.dart';
 
@@ -63,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _nuke(BuildContext context) async {
     const messages = [
       'Yakin mau NUKE semua data?',
-      'Beneran? Riwayat + API key + jurnal HABIS.',
+      'Beneran? Riwayat + API key + jurnal + target tracker HABIS.',
       'Klik sekali lagi. Tidak ada jalan balik.',
     ];
 
@@ -99,6 +100,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     await Hive.box('store').clear();
     await Hive.box('journal').clear();
+    TargetsStore.clear();
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
