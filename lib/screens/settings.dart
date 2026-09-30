@@ -14,7 +14,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final TextEditingController api;
   late final TextEditingController hibp;
   late final TextEditingController model;
-  late final TextEditingController twelve;
   bool autoModel = true;
   bool obscure = true;
   List<String> discovered = [];
@@ -26,18 +25,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     api = TextEditingController(text: Store.apiKey ?? '');
     hibp = TextEditingController(text: Store.hibpKey ?? '');
     model = TextEditingController(text: Store.model);
-    twelve = TextEditingController(text: Store.s.get('twelveDataKey')?.toString() ?? '');
     autoModel = Store.autoModel;
   }
   @override
-  void dispose() { api.dispose(); hibp.dispose(); model.dispose(); twelve.dispose(); super.dispose(); }
+  void dispose() { api.dispose(); hibp.dispose(); model.dispose(); super.dispose(); }
 
   void _save() {
     Store.apiKey = api.text.trim().isEmpty ? null : api.text.trim();
     Store.hibpKey = hibp.text.trim().isEmpty ? null : hibp.text.trim();
     Store.model = model.text.trim().isEmpty ? 'openrouter/auto' : model.text.trim();
     Store.autoModel = autoModel;
-    Store.s.put('twelveDataKey', twelve.text.trim());
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pengaturan disimpan lokal di perangkat.')));
     setState(() {});
   }
@@ -90,7 +87,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     const SizedBox(height: 14),
     TextField(controller: hibp, obscureText: true, decoration: const InputDecoration(labelText: 'HIBP API Key (opsional)', prefixIcon: Icon(Icons.shield_outlined))),
     const SizedBox(height: 14),
-    TextField(controller: twelve, obscureText: true, decoration: const InputDecoration(labelText: 'Twelve Data API Key (opsional)', prefixIcon: Icon(Icons.show_chart))),
     const SizedBox(height: 18),
     ElevatedButton.icon(onPressed: _save, icon: const Icon(Icons.save_outlined), label: const Text('Simpan pengaturan')),
     OutlinedButton.icon(onPressed: () { Store.apiKey = null; api.clear(); setState(() {}); }, icon: const Icon(Icons.delete_outline), label: const Text('Hapus API key')),
