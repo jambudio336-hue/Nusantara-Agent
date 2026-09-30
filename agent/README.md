@@ -1,6 +1,6 @@
 # Nusantara Agent Runtime
 
-Python runtime for desktop/terminal use. It supports Ollama and OpenAI-compatible providers through environment variables.
+Optional Python runtime for desktop/terminal use. The Android APK does not require this runtime or a backend server.
 
 ## Run
 
@@ -17,7 +17,7 @@ Environment:
 - `NUSANTARA_PROVIDER=ollama` (default) or `openrouter`
 - `OLLAMA_BASE_URL=http://127.0.0.1:11434`
 - `OLLAMA_MODEL=llama3.2`
-- `OPENROUTER_API_KEY=...`
+- `OPENROUTER_API_KEY=...` (development environment only; never commit secrets)
 - `OPENROUTER_MODEL=...`
 
 The runtime intentionally does not execute arbitrary shell commands. Tools are registered explicitly and run inside a scoped workspace.

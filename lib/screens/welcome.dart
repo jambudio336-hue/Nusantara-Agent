@@ -83,7 +83,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 label: const Text('SETUJU & MASUK', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: .8)),
               )),
               const SizedBox(height: 14),
-              const Text('API key pengguna disimpan lokal. by M4zk1pL4y',
+              const Text('Tanpa backend wajib • BYO OpenRouter API key • by M4zk1pL4y',
                 textAlign: TextAlign.center, style: TextStyle(color: Colors.white30, fontSize: 11)),
             ]),
           ),

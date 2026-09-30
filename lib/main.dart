@@ -7,6 +7,7 @@ import 'screens/welcome.dart';
 import 'screens/chat.dart';
 import 'services/connectivity_service.dart';
 import 'services/ghost_mode.dart';
+import 'services/storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,7 @@ void main() async {
   await Hive.openBox('store');
   await Hive.openBox('journal');
   await Hive.openBox('targets');
+  await Store.init();
   runApp(const MazkiApp());
 }
 

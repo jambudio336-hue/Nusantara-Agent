@@ -19,7 +19,7 @@
 - Trading workspace: chart/candle analysis, indicators, risk sizing, journal, dan macro/news context.
 - PDF export dan audit/logging.
 - Integrasi Telegram/WhatsApp melalui connector/bot yang dikonfigurasi pengguna.
-- Desktop/terminal agent untuk Windows, macOS, Linux, dan Termux.
+- Fokus rilis ini adalah APK Android standalone; runtime desktop tetap dipisahkan sebagai eksperimen opsional.
 
 ## Security model
 
@@ -60,7 +60,7 @@ AI traffic can use OpenRouter or another OpenAI-compatible provider. Public inte
 
 ## Local-first storage
 
-Chat history, journals, preferences, and user configuration are stored locally on the device/client. No mandatory remote database is required for the core APK. Provider credentials are not committed to Git.
+Chat history, journals, preferences, and user configuration are stored locally on the device/client. OpenRouter API key disimpan melalui secure storage platform Android. Request AI langsung dari APK ke OpenRouter; tidak ada backend atau server aplikasi yang wajib, dan provider credentials tidak di-commit ke Git.
 
 ## Roadmap
 

@@ -1,6 +1,11 @@
 # Changelog
 
 ## Unreleased - 2026-10-01
+- Added dark Garuda-inspired launcher icon for Mazkiplay AI.
+- Added Android secure storage for user-provided OpenRouter and optional intelligence keys.
+- Added OpenRouter auto-model discovery, free-model fallback, and resilient model failover.
+- Added image and file attachments to the chat workflow; image payloads can be sent directly to vision-capable models.
+- Added Chat Baru, Tools navigation, and clearer local-only/no-backend messaging.
 - Added premium live intelligence dashboard as the primary workspace.
 - Added consent/disclaimer onboarding with required acknowledgement.
 - Added responsive Nusantara accent palette and dashboard status cards.
