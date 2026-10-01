@@ -69,7 +69,7 @@ Chat history, journals, preferences, and user configuration are stored locally o
 3. Tekan **Tes API**. Aplikasi memanggil endpoint resmi `GET /api/v1/key` dan hanya menampilkan **CONNECTED** jika OpenRouter benar-benar mengautentikasi key.
 4. Tekan **Simpan** lalu gunakan **Chat**. Request chat streaming memakai key yang sama dari Android secure storage.
 
-Model list bersifat discovery, bukan bukti autentikasi; karena itu tes key menggunakan endpoint autentikasi resmi. Error HTTP, key invalid, expired key, dan limit ditampilkan di aplikasi.
+Mode default memakai model router resmi **`openrouter/free`**, yang memilih model gratis yang tersedia secara otomatis lalu mencoba fallback gratis lain. **Gratis tidak berarti tanpa autentikasi**: OpenRouter tetap memerlukan API key aktif dan kuota free-tier dapat memiliki batas harian/rate limit. Model list bersifat discovery, bukan bukti autentikasi; karena itu tes key menggunakan endpoint autentikasi resmi. Error HTTP, key invalid, expired key, dan limit ditampilkan di aplikasi.
 
 ## Live trading
 

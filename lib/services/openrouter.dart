@@ -7,6 +7,7 @@ class OpenRouter {
   static const endpoint = 'https://openrouter.ai/api/v1/chat/completions';
   static const modelsEndpoint = 'https://openrouter.ai/api/v1/models';
   static const keyEndpoint = 'https://openrouter.ai/api/v1/key';
+  static const freeRouter = 'openrouter/free';
   static const systemPrompt = '''
 Kamu adalah Mazkiplay AI, asisten berbahasa Indonesia yang ramah, terstruktur, dan profesional.
 Bantu coding lintas bahasa, debugging, arsitektur aplikasi, analisis attachment, analisis data, trading research,
@@ -70,9 +71,9 @@ Jawab dengan langkah yang jelas dan praktis. Selalu akhiri dengan: by.mazkiplay.
           .where((id) => id.isNotEmpty && id.contains(':free'))
           .take(5)
           .toList();
-      return ['openrouter/auto', ...free, 'openai/gpt-4o-mini'];
+      return [freeRouter, ...free, 'openrouter/auto'];
     } catch (_) {
-      return ['openrouter/auto', 'openai/gpt-4o-mini'];
+      return [freeRouter, 'openrouter/auto'];
     }
   }
 

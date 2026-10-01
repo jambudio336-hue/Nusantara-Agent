@@ -10,6 +10,8 @@
 - Fixed Market Radar refresh so calendar failures do not hide market quotes.
 - Added CoinGecko public realtime fallback for crypto radar quotes when exchange endpoints rate-limit or return 403.
 - Switched the TradingView screen to the embeddable dark widget URL and added an in-app retry/error state.
+- Set the default OpenRouter route to the official `openrouter/free` router with free-model fallback.
+- Added Settings guidance that free OpenRouter access still requires the user's active API key and free-tier quota.
 - Added dark Garuda-inspired launcher icon for Mazkiplay AI.
 - Added Android secure storage for user-provided OpenRouter and optional intelligence keys.
 - Added OpenRouter auto-model discovery, free-model fallback, and resilient model failover.

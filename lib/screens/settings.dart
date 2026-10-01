@@ -36,7 +36,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await Store.saveApiKey(cleaned.isEmpty ? null : cleaned);
     api.text = cleaned;
     Store.hibpKey = hibp.text.trim().isEmpty ? null : hibp.text.trim();
-    Store.model = model.text.trim().isEmpty ? 'openrouter/auto' : model.text.trim();
+    Store.model = model.text.trim().isEmpty ? OpenRouter.freeRouter : model.text.trim();
     Store.autoModel = autoModel;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pengaturan disimpan lokal di perangkat.')));
     setState(() {});
@@ -94,9 +94,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     const SizedBox(height: 8),
     const Text('Key tidak dibundel ke APK dan disimpan melalui secure storage platform.', style: TextStyle(color: Colors.white38, fontSize: 11)),
     const SizedBox(height: 14),
-    SwitchListTile(contentPadding: EdgeInsets.zero, value: autoModel, onChanged: (v) => setState(() => autoModel = v), title: const Text('Auto model & failover'), subtitle: const Text('OpenRouter memilih model tersedia dan mencoba fallback saat gagal.')),
+    SwitchListTile(contentPadding: EdgeInsets.zero, value: autoModel, onChanged: (v) => setState(() => autoModel = v), title: const Text('OpenRouter Free & failover'), subtitle: const Text('Memakai openrouter/free lalu mencoba model gratis lain yang tersedia. API key tetap wajib.')),
     const SizedBox(height: 8),
-    TextField(controller: model, enabled: !autoModel, decoration: const InputDecoration(labelText: 'Model tetap (opsional)', hintText: 'contoh: openai/gpt-4o-mini', prefixIcon: Icon(Icons.psychology_outlined))),
+    TextField(controller: model, enabled: !autoModel, decoration: const InputDecoration(labelText: 'Model tetap (opsional)', hintText: 'contoh: openrouter/free', prefixIcon: Icon(Icons.psychology_outlined))),
     const SizedBox(height: 8),
     OutlinedButton.icon(onPressed: loadingModels ? null : _discover, icon: const Icon(Icons.sync), label: Text(loadingModels ? 'Mencari model…' : 'Temukan model OpenRouter')),
     if (discovered.isNotEmpty) ...[

@@ -46,9 +46,9 @@ class Store {
   static String? get itickKey => s.get('itickKey') as String?;
   static set itickKey(String? v) => v == null ? s.delete('itickKey') : s.put('itickKey', v);
 
-  /// openrouter/auto lets OpenRouter route to an available model. A specific
+  /// openrouter/free routes to an available free model. A specific
   /// model id can still be pinned by the user in Settings.
-  static String get model => s.get('model')?.toString() ?? 'openrouter/auto';
+  static String get model => s.get('model')?.toString() ?? 'openrouter/free';
   static set model(String v) => s.put('model', v);
   static bool get autoModel => s.get('autoModel', defaultValue: true) == true;
   static set autoModel(bool v) => s.put('autoModel', v);
