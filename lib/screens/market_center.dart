@@ -27,17 +27,16 @@ class _MarketCenterScreenState extends State<MarketCenterScreen> {
   void dispose() { timer?.cancel(); super.dispose(); }
 
   Future<void> _refresh() async {
-    try {
-      final result = await Future.wait([MarketScanner.scan(), EconomicCalendar.today()]);
-      if (!mounted) return;
-      setState(() {
-        quotes = List<MarketQuote>.from(result[0] as List);
-        events = List<EconomicEvent>.from(result[1] as List);
-        loading = false;
-      });
-    } catch (_) {
-      if (mounted) setState(() => loading = false);
-    }
+    final marketFuture = MarketScanner.scan().catchError((_) => <MarketQuote>[]);
+    final calendarFuture = EconomicCalendar.today().catchError((_) => <EconomicEvent>[]);
+    final quotesResult = await marketFuture;
+    final eventsResult = await calendarFuture;
+    if (!mounted) return;
+    setState(() {
+      quotes = quotesResult;
+      events = eventsResult;
+      loading = false;
+    });
   }
 
   Color _signalColor(double change) {

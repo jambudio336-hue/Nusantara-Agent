@@ -11,7 +11,19 @@ class MarketData {
 
   static Uri chartUri(String symbol, String interval) => Uri.https(
     'www.tradingview.com',
-    '/chart/',
-    {'symbol': tradingViewSymbol(symbol), 'interval': interval, 'theme': 'dark'},
+    '/widgetembed/',
+    {
+      'symbol': tradingViewSymbol(symbol),
+      'interval': interval,
+      'theme': 'dark',
+      'style': '1',
+      'locale': 'en',
+      'hide_top_toolbar': 'false',
+      'hide_legend': 'false',
+      'allow_symbol_change': 'true',
+      'save_image': 'false',
+      'enable_publishing': 'false',
+      'hideideas': 'true',
+    },
   );
 }

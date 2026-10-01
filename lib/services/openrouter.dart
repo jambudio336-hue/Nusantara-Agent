@@ -35,11 +35,15 @@ Jawab dengan langkah yang jelas dan praktis. Selalu akhiri dengan: by.mazkiplay.
   static Future<Map<String, dynamic>> verifyKey(String rawKey) async {
     final key = normalizeKey(rawKey);
     if (key.isEmpty) throw Exception('API key kosong.');
+    if (key.contains('<') || key.contains('>') || key.toUpperCase().contains('OPENROUTER_API_KEY')) {
+      throw Exception('Yang dimasukkan masih placeholder, bukan API key asli.');
+    }
     final res = await http.get(Uri.parse(keyEndpoint), headers: _headers(key)).timeout(const Duration(seconds: 30));
     final data = jsonDecode(res.body);
     if (res.statusCode < 200 || res.statusCode >= 300) {
       final detail = data is Map && data['error'] is Map ? data['error']['message'] : data;
-      throw Exception('OpenRouter HTTP ${res.statusCode}: ${detail ?? 'API key ditolak'}');
+      final hint = res.statusCode == 401 ? ' Periksa key OpenRouter, status aktif, dan limitnya.' : '';
+      throw Exception('OpenRouter HTTP ${res.statusCode}: ${detail ?? 'API key ditolak'}.$hint');
     }
     return data is Map && data['data'] is Map ? Map<String, dynamic>.from(data['data']) : <String, dynamic>{};
   }

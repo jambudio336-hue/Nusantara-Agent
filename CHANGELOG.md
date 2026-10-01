@@ -6,6 +6,10 @@
 - Added explicit CONNECTED / CONNECTION FAILED / NOT TESTED status in Settings.
 - Added live dark TradingView chart entry point from Market Center and AI analysis action.
 - Added CI generation of the Garuda launcher icon before every Android release build.
+- Fixed API-key diagnostics for placeholder keys and HTTP 401 responses.
+- Fixed Market Radar refresh so calendar failures do not hide market quotes.
+- Added CoinGecko public realtime fallback for crypto radar quotes when exchange endpoints rate-limit or return 403.
+- Switched the TradingView screen to the embeddable dark widget URL and added an in-app retry/error state.
 - Added dark Garuda-inspired launcher icon for Mazkiplay AI.
 - Added Android secure storage for user-provided OpenRouter and optional intelligence keys.
 - Added OpenRouter auto-model discovery, free-model fallback, and resilient model failover.
