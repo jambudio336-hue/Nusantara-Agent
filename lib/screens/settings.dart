@@ -32,7 +32,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void dispose() { api.dispose(); hibp.dispose(); model.dispose(); super.dispose(); }
 
   Future<void> _save() async {
-    await Store.saveApiKey(api.text.trim().isEmpty ? null : api.text.trim());
+    final cleaned = OpenRouter.normalizeKey(api.text);
+    await Store.saveApiKey(cleaned.isEmpty ? null : cleaned);
+    api.text = cleaned;
     Store.hibpKey = hibp.text.trim().isEmpty ? null : hibp.text.trim();
     Store.model = model.text.trim().isEmpty ? 'openrouter/auto' : model.text.trim();
     Store.autoModel = autoModel;
@@ -41,13 +43,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _testKey() async {
-    final key = api.text.trim();
+    final key = OpenRouter.normalizeKey(api.text);
     if (key.isEmpty) { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Masukkan API key OpenRouter dulu.'))); return; }
     await Store.saveApiKey(key);
+    api.text = key;
     setState(() => connectionOk = null);
     try {
-      final models = await OpenRouter.models();
-      if (mounted) { setState(() => connectionOk = true); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('API key valid. ${models.length} model tersedia.'))); }
+      final details = await OpenRouter.verifyKey(key);
+      if (mounted) { setState(() => connectionOk = true); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('CONNECTED — key valid${details['is_free_tier'] == true ? ' (free tier)' : ''}.'))); }
     } catch (e) {
       if (mounted) { setState(() => connectionOk = false); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Tes API key gagal: $e'), duration: const Duration(seconds: 6))); }
     }

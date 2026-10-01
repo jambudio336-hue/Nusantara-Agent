@@ -62,6 +62,19 @@ AI traffic can use OpenRouter or another OpenAI-compatible provider. Public inte
 
 Chat history, journals, preferences, and user configuration are stored locally on the device/client. OpenRouter API key disimpan melalui secure storage platform Android. Request AI langsung dari APK ke OpenRouter; tidak ada backend atau server aplikasi yang wajib, dan provider credentials tidak di-commit ke Git.
 
+## OpenRouter connection
+
+1. Buat API key di [OpenRouter Keys](https://openrouter.ai/keys).
+2. Buka **Settings → OpenRouter API Key** dan tempel hanya key-nya (boleh juga `Bearer ...`; aplikasi akan membersihkan prefix tersebut).
+3. Tekan **Tes API**. Aplikasi memanggil endpoint resmi `GET /api/v1/key` dan hanya menampilkan **CONNECTED** jika OpenRouter benar-benar mengautentikasi key.
+4. Tekan **Simpan** lalu gunakan **Chat**. Request chat streaming memakai key yang sama dari Android secure storage.
+
+Model list bersifat discovery, bukan bukti autentikasi; karena itu tes key menggunakan endpoint autentikasi resmi. Error HTTP, key invalid, expired key, dan limit ditampilkan di aplikasi.
+
+## Live trading
+
+Market Center menyediakan tombol **BUKA CHART** untuk chart TradingView live dark di dalam APK. Pengguna dapat memakai kontrol dan indikator TradingView secara manual, lalu menekan **ANALISA AI** untuk analisis teknikal dan konteks fundamental yang tersedia. Aplikasi tidak mengarang harga, volume, order book, atau berita yang tidak diterima dari sumber.
+
 ## Roadmap
 
 ### Phase 1 — Foundation
@@ -97,8 +110,10 @@ Chat history, journals, preferences, and user configuration are stored locally o
 - [ ] evidence vault
 
 ### Phase 4 — Trading
-- [x] public market candle ingestion
-- [x] technical indicators
+- [x] TradingView live dark chart embedded in Android
+- [x] manual TradingView indicators and chart controls
+- [x] AI signal action for selected symbol/timeframe
+- [x] technical indicator and risk-analysis workflow
 - [x] risk sizing
 - [x] trade journal
 - [ ] multi-timeframe workspace

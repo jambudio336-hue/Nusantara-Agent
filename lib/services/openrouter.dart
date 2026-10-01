@@ -6,6 +6,7 @@ import 'storage.dart';
 class OpenRouter {
   static const endpoint = 'https://openrouter.ai/api/v1/chat/completions';
   static const modelsEndpoint = 'https://openrouter.ai/api/v1/models';
+  static const keyEndpoint = 'https://openrouter.ai/api/v1/key';
   static const systemPrompt = '''
 Kamu adalah Mazkiplay AI, asisten berbahasa Indonesia yang ramah, terstruktur, dan profesional.
 Bantu coding lintas bahasa, debugging, arsitektur aplikasi, analisis attachment, analisis data, trading research,
@@ -24,6 +25,24 @@ Jawab dengan langkah yang jelas dan praktis. Selalu akhiri dengan: by.mazkiplay.
     'HTTP-Referer': 'https://mazkiplay.com',
     'X-OpenRouter-Title': 'Mazkiplay AI',
   };
+
+  static String normalizeKey(String raw) {
+    var key = raw.trim().replaceAll('`', '').replaceAll('"', '').replaceAll("'", '');
+    if (key.toLowerCase().startsWith('bearer ')) key = key.substring(7).trim();
+    return key;
+  }
+
+  static Future<Map<String, dynamic>> verifyKey(String rawKey) async {
+    final key = normalizeKey(rawKey);
+    if (key.isEmpty) throw Exception('API key kosong.');
+    final res = await http.get(Uri.parse(keyEndpoint), headers: _headers(key)).timeout(const Duration(seconds: 30));
+    final data = jsonDecode(res.body);
+    if (res.statusCode < 200 || res.statusCode >= 300) {
+      final detail = data is Map && data['error'] is Map ? data['error']['message'] : data;
+      throw Exception('OpenRouter HTTP ${res.statusCode}: ${detail ?? 'API key ditolak'}');
+    }
+    return data is Map && data['data'] is Map ? Map<String, dynamic>.from(data['data']) : <String, dynamic>{};
+  }
 
   static Future<List<Map<String, dynamic>>> models() async {
     final key = Store.apiKey;

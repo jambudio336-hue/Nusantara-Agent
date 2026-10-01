@@ -1,0 +1,8 @@
+Mazkiplay AI / Nusantara-Agent
+Copyright 2026 M4ZK1PLAY / Mas Kiplay Pekalongan Community
+
+This project is licensed under Apache License 2.0; see LICENSE.
+
+The Android client optionally connects directly to third-party services selected by the user, including OpenRouter for AI requests and TradingView for chart display. Those services are not owned by this project and remain subject to their own terms, licenses, rate limits, and privacy policies.
+
+Flutter and package dependencies retain their respective licenses as distributed by their authors.

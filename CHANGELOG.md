@@ -1,6 +1,11 @@
 # Changelog
 
 ## Unreleased - 2026-10-01
+- Fixed OpenRouter key testing to use the official `GET /api/v1/key` authentication endpoint.
+- Added key normalization for pasted `Bearer`, quote, and backtick wrappers.
+- Added explicit CONNECTED / CONNECTION FAILED / NOT TESTED status in Settings.
+- Added live dark TradingView chart entry point from Market Center and AI analysis action.
+- Added CI generation of the Garuda launcher icon before every Android release build.
 - Added dark Garuda-inspired launcher icon for Mazkiplay AI.
 - Added Android secure storage for user-provided OpenRouter and optional intelligence keys.
 - Added OpenRouter auto-model discovery, free-model fallback, and resilient model failover.
